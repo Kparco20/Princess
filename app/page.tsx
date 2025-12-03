@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import MailInvitation from '@/components/MailInvitation'
 
 export default function Home() {
