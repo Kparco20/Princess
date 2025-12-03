@@ -1,15 +1,31 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function MailInvitation() {
   const [isOpen, setIsOpen] = useState(false)
   const [showEventDetails, setShowEventDetails] = useState(false)
+  const [isMusicOn, setIsMusicOn] = useState(false)
+  // Try to start music on first mount; browsers may block autoplay with sound.
+  useEffect(() => {
+    // Attempt autoplay once; if blocked, user can press Play Music.
+    const t = setTimeout(() => setIsMusicOn(true), 600)
+    return () => clearTimeout(t)
+  }, [])
 
   return (
-    <div className='w-full flex flex-col items-center justify-center'>
+    <div className='w-full flex flex-col items-center justify-center relative'>
+      {/* Hidden YouTube iframe created on user click (or attempted autoplay) */}
+      {isMusicOn && (
+        <iframe
+          src="https://www.youtube.com/embed/HpphFd_mzXE?autoplay=1&controls=0&loop=1&playlist=HpphFd_mzXE&modestbranding=1"
+          allow="autoplay; encrypted-media"
+          className="w-0 h-0 opacity-0 pointer-events-none"
+          title="background-music"
+        />
+      )}
       {!isOpen ? (
-        // ENVELOPE
+        <>
         <button
           onClick={() => setIsOpen(true)}
           className='group relative w-72 h-52 bg-gradient-to-b from-amber-50 to-amber-100 rounded-lg shadow-2xl hover:shadow-amber-900/50 transition-all duration-500 transform hover:scale-105 flex items-center justify-center cursor-pointer border border-amber-200/50'
@@ -28,8 +44,18 @@ export default function MailInvitation() {
             </p>
           </div>
         </button>
+
+        {/* Music control placed below the envelope */}
+        <div className="mt-4">
+          <button
+            onClick={() => setIsMusicOn((s) => !s)}
+            className={`px-4 py-2 rounded-md text-sm font-light transition ${isMusicOn ? 'bg-amber-400 text-black' : 'bg-gray-800 text-amber-300'}`}
+          >
+            {isMusicOn ? 'Pause Music' : 'Play Music'}
+          </button>
+        </div>
+        </>
       ) : !showEventDetails ? (
-        // INVITATION CARD
         <div className='w-full max-w-2xl animate-fade-in'>
           <div className='bg-gradient-to-br from-gray-950 via-gray-900 to-black rounded-2xl border border-amber-200/30 shadow-2xl overflow-hidden'>
             {/* Decorative top border */}
@@ -54,7 +80,7 @@ export default function MailInvitation() {
                 </h2>
 
                 <h3 className='text-5xl md:text-7xl font-light text-amber-100 tracking-wide' style={{ fontFamily: 'serif' }}>
-                  Alisha 
+                  Princess Nicole 
                 </h3>
 
                 <div className='py-8 space-y-3'>
@@ -96,7 +122,6 @@ export default function MailInvitation() {
           </div>
         </div>
       ) : (
-        // EVENT DETAILS
         <div className='w-full max-w-4xl animate-fade-in space-y-8'>
           <button
             onClick={() => {
